@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="polython-challenge-item.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="view-user">
@@ -21,18 +23,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <div class="card">
-      <div class="circle">U</div>
-      <h1>View User</h1>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.</p>
-      <p>Id nam odio natum malorum, tibique copiosae expetenda mel ea.Detracto suavitate repudiandae no eum. Id adhuc minim soluta nam.Id nam odio natum malorum, tibique copiosae expetenda mel ea.</p>
-      <a href="/reto">reto</a>
-    </div>
+
+    <p>Retro actual<a href="/reto">reto</a></p>
+    <iron-list items="[[challenges]]" >
+      <template>
+        <polython-challenge-item
+         title=[[item.title]]
+         description=[[item.description]]
+         start-time=[[item.startTime]]
+         end-time=[[item.endTime]]
+         execution-time=[[item.executionTime]]
+         picture-href=[[item.pictureHref]]
+         location=[[item.location]]
+        >
+        </polython-challenge-item>
+      </template>
+    </iron-list>
   </template>
 
   <script>
     class ViewUser extends Polymer.Element {
       static get is() { return 'view-user'; }
+
+      static get properties() {
+        return {
+          challenges: {
+            type: 'Array'
+          }
+        }
+      }
+
+      connectedCallback() {
+        this.challenges = this._getChallenges();
+      }
+
+      _getChallenges() {
+        return [
+          {
+            title: 'Checkpoint con mariachi',
+            description: 'Hazte una foto con el android Mariachi',
+            startTime: '13:00',
+            endTime: '13:30',
+            executionTime: '13:05',
+            location: 'x, y',
+            pictureHref: 'https://1.bp.blogspot.com/-LqjVHEyDImU/V7buZvy_P_I/AAAAAAAAIeQ/YzrvMSnd06YDwf7heYz53qMg6rEm5GJWACLcB/s640/14045890_318329811851920_8508340804919828659_n.jpg'
+          },
+          {
+            title: 'Checkpoint goloso',
+            description: 'Hazte una foto comiendo chocolates',
+            startTime: '15:00',
+            endTime: '15:30',
+            executionTime: '15:21',
+            location: 'x, y',
+            pictureHref: 'http://www.bellabeat.com/blog/media/Indulging-in-a-sweet-affair-with-chocolate-000048186060_Small.jpg'
+          },          
+          {
+            title: 'Checkpoint con frida',
+            description: 'Hazte una foto con el logo de Frida',
+            startTime: '17:00',
+            endTime: '17:30',
+            executionTime: undefined,
+            location: undefined
+          }          
+        ]
+      }
     }
 
     window.customElements.define(ViewUser.is, ViewUser);

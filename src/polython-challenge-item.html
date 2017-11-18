@@ -1,0 +1,108 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="polython-challenge-item">
+  <template>
+
+    <custom-style>
+      <style is="custom-style">
+        body {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        paper-card {
+          width: 500px;
+        }
+
+        .polython-challenge-header {
+          @apply --paper-font-headline;
+        }
+
+        .polython-challenge-light {
+          color: var(--paper-grey-600);
+        }
+
+        .polython-challenge-location {
+          float: right;
+          font-size: 15px;
+          vertical-align: middle;
+        }
+
+        .polython-challenge-reserve {
+          color: var(--google-blue-500);
+        }
+
+        iron-icon.star {
+          --iron-icon-width: 16px;
+          --iron-icon-height: 16px;
+          color: var(--paper-amber-500);
+        }
+
+        iron-icon.star:last-of-type {
+          color: var(--paper-grey-500);
+        }
+      </style>
+    </custom-style>    
+    
+    <paper-card image="[[pictureHref]]">
+      <div class="card-content">
+        <div class="polython-challenge-header">[[title]]
+          <div class="polython-challenge-location polython-challenge-light">
+            <iron-icon icon="communication:location-on"></iron-icon>
+            <span>[[location]]</span>
+          </div>
+        </div>
+        <p class="polython-challenge-light">[[description]]</p>
+      </div>
+      <div class="card-actions">
+        <div class="horizontal justified">
+          <paper-icon-button icon="icons:event"></paper-icon-button>
+          <paper-button>[[startTime]]</paper-button>
+          <paper-button>[[endTime]]</paper-button>
+          <paper-button>[[executionTime]]</paper-button>
+          <paper-button class="polython-challenge-reserve">Do it!</paper-button>
+        </div>
+      </div>
+    </paper-card>
+  </template>
+
+  <script>
+    class PolythonChallengeItem extends Polymer.Element {
+      static get is() {
+        return 'polython-challenge-item';
+      }
+
+      static get properties() {
+        return {
+          title: {
+            type: 'String'
+          },
+          description: {
+            type: 'String'
+          },
+          startTime: {
+            type: 'Object'
+          },
+          endTime: {
+            type: 'Object'
+          },
+          executionTime: {
+            type: 'Object'
+          },
+          pictureHref: {
+            type: 'String'
+          },
+          location: {
+            type: 'String'
+          }
+        }
+      }
+    }
+
+    window.customElements.define(PolythonChallengeItem.is, PolythonChallengeItem);
+  </script>
+
+</dom-module>
