@@ -1,12 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-
+<link rel="import" href="../bower_components/flip-clock/flip-clock.html">
 <dom-module id="polython-challenge-item">
   <template>
 
     <custom-style>
       <style is="custom-style">
+      
         body {
           display: flex;
           align-items: center;
@@ -44,6 +45,15 @@
         iron-icon.star:last-of-type {
           color: var(--paper-grey-500);
         }
+
+        flip-clock {
+          --digits-size :  20px;
+        }
+
+        .buttons-action {
+          display: inline-flex;
+        }
+
       </style>
     </custom-style>    
     
@@ -58,11 +68,8 @@
         <p class="polython-challenge-light">[[description]]</p>
       </div>
       <div class="card-actions">
-        <div class="horizontal justified">
-          <paper-icon-button icon="icons:event"></paper-icon-button>
-          <paper-button>[[startTime]]</paper-button>
-          <paper-button>[[endTime]]</paper-button>
-          <paper-button>[[executionTime]]</paper-button>
+        <div class="buttons-action">
+          <flip-clock display-mode="countdown" auto start-from="20" hide-hours></flip-clock>
           <paper-button class="polython-challenge-reserve">Do it!</paper-button>
         </div>
       </div>
