@@ -77,6 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
 
             this.screenshot = canvas.toDataURL('image/png');
+            this.dispatchEvent(new CustomEvent('snap-launched'));
       }
     }
 
@@ -117,17 +118,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </firebase-document>
 
     <div class="card">
-      <your-selfie screenshot="{{selfie}}"></your-selfie>
-      <firebase-document 
-        path="/selfie/{{retoactive.$value}}/{{loggedUser.uid}}"
-        data="{{selfie}}">
-    </firebase-document>
+      <your-selfie id="selfid" screenshot="{{selfie}}"></your-selfie>
+      <firebase-document id="fireChallenges">
+      </firebase-document>
     </div>
   </template>
 
   <script>
     class ViewReto extends Polymer.Element {
       static get is() { return 'view-reto'; }
+      static get properties() {
+        return {
+          loggedUser: {
+            type: Object
+          }
+        };
+      }
+      ready(){
+        super.ready();
+        var me=this;
+        this.$.selfid.addEventListener('snap-launched',function(){
+          navigator.geolocation.getCurrentPosition(function(position){
+            me.$.fireChallenges.data={selfie:me.selfie,timestamp:Date.now(),latitude:position.coords.latitude,longitude:position.coords.longitude};
+            me.$.fireChallenges.saveValue("/userChallenges/"+me.loggedUser.uid,me.retoactive);
+
+          });
+        });
+      }
     }
 
     window.customElements.define(ViewReto.is, ViewReto);
