@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="your-selfie">
@@ -78,6 +79,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             this.screenshot = canvas.toDataURL('image/png');
             this.dispatchEvent(new CustomEvent('snap-launched'));
+
+            this.$.videoId.pause();
+
       }
     }
 
@@ -102,6 +106,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       h1 {
         text-align: center;
       }
+
+      #selfid[oculta]{
+        display: none;
+      }
       
     </style>
 
@@ -112,15 +120,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         signed-in="{{authenticated}}">
     </firebase-auth>
 
-    <firebase-document 
-        path="/activeChallenge"
+    <firebase-document
+        id="query1"
         data="{{retoactive}}">
     </firebase-document>
 
     <div class="card">
       <your-selfie id="selfid" screenshot="{{selfie}}"></your-selfie>
+      <img id="imagen"></img>
       <firebase-document id="fireChallenges">
       </firebase-document>
+      <firebase-document id="fireChallengesQuery" path="{{fullPath}}" data="{{done}}">
+      </firebase-document>
+      <!--firebase-query path="/userChallenges/{{loggedUser.uid}}/{{retoactive.value}}" data="{{done}}">
+      </firebase-query-->
     </div>
   </template>
 
@@ -130,10 +143,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get properties() {
         return {
           loggedUser: {
-            type: Object
+            type: Object,
+            observer: '_userChanged'            
+          },
+          done: {
+            type:Object,
+            observer: '_onMyPropertyChanged'
+          },
+          retoactive: {
+            type:Object
+          },
+          fullPath: {
+            type: String
           }
         };
       }
+      static get observers() {
+        return [
+            'userNameChanged(loggedUser,retoactive)'
+        ]
+      }
+
       ready(){
         super.ready();
         var me=this;
@@ -141,9 +171,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           navigator.geolocation.getCurrentPosition(function(position){
             me.$.fireChallenges.data={selfie:me.selfie,timestamp:Date.now(),latitude:position.coords.latitude,longitude:position.coords.longitude};
             me.$.fireChallenges.saveValue("/userChallenges/"+me.loggedUser.uid,me.retoactive);
-
+            me.$.selfid.setAttribute("oculta",true);
+            me.$.imagen.src=me.selfie;
           });
         });
+      }
+      _onMyPropertyChanged(value){
+        if(Object.keys(value).length){
+          this.$.selfid.setAttribute("oculta",true);
+          //this.$.imagen.src=value[Object.keys(value)[0]].selfie;
+          this.$.imagen.src=value.selfie;
+        }
+      }
+      userNameChanged(v1,v2){
+        if(v1 && v1.uid && !isNaN(v2)){
+          this.fullPath="/userChallenges/"+v1.uid+"/"+v2;
+        }
+      }
+      _userChanged(user){
+        if(user!=null)
+          this.$.query1.path="/activeChallenge";
       }
     }
 
