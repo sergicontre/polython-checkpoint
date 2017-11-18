@@ -18,7 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" async href="../bower_components/app-route/app-location.html">
-<link rel="import" async href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route-mixin/app-route-mixin.html">
 <link rel="import" async href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" async href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" async href="my-icons.html">
@@ -110,11 +110,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </firebase-document>
 
     <app-location route="{{route}}"></app-location>
-    <app-route
-        route="{{route}}"
-        pattern="[[rootPattern]]:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
 
     <app-drawer-layout id="appDrawerLayout" fullbleed>
       <template is="dom-if" if="[[isAdmin(role)]]">
@@ -168,7 +163,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class PolythonCheckpoints extends Polymer.LazyImportsMixin(Polymer.Element) {
+    class PolythonCheckpoints extends AppRouteMixin(Polymer.LazyImportsMixin(Polymer.Element)) {
 
       static get is() { return 'polython-checkpoints'; }
 
@@ -178,13 +173,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           apiKey: String,
           projectId: String,
           messagingSenderId: String,
-          page: {
-            type: String,
-            reflectToAttribute: true,
-            observer: '_pageChanged',
-          },
-          rootPattern: String,
-          routeData: Object,
           subroute: String,
           loggedUser: {
             type: Object
@@ -210,7 +198,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get observers() {
         return [
-          '_routePageChanged(routeData.page)',
+          '_pageChanged(page)',
           '_userRoleChanged(role)'
         ];
       }
@@ -221,14 +209,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       constructor() {
         super();
-
-        // Get root pattern for app-route, for more info about `rootPath` see:
-        // https://www.polymer-project.org/2.0/docs/upgrade#urls-in-templates
-        this.rootPattern = (new URL(this.rootPath)).pathname;
       }
 
       connectedCallback() {
         super.connectedCallback();
+				this.active = true;
         if (this.hostDomain) {
           Polymer.Async.idlePeriod.run(function(){
             var _providerFromName = this.$.auth._providerFromName;
@@ -244,29 +229,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _routePageChanged(page) {
-        // Polymer 2.0 will call with `undefined` on initialization.
-        // Ignore until we are properly called with a string.
-        if (page === undefined) {
-          return;
-        }
-
-        // If no page was found in the route data, page will be an empty string.
-        // Deault to 'view1' in that case.
-        this.page = page || this.defaultPage;
-
-        // Close a non-persistent drawer when the page & route are changed.
-        if (this.$.drawer && !this.$.drawer.persistent) {
-          this.$.drawer.close();
-        }
-      }
-
       _pageChanged(page) {
         this.importLazyGroup(page)
           .then((results) => {
             window.dispatchEvent(new CustomEvent('resize'));
           })
           .catch(this._showPage404.bind(this));
+        // Close a non-persistent drawer when the page & route are changed.
+        if (this.$.drawer && !this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
       }
 
       _showPage404() {
@@ -282,7 +254,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       };
 
       _authenticatedChanged(authenticated) {
-        this.set('routeData.page', this.defaultPage);
+        this.set('page', this.defaultPage);
         if (authenticated) {
           this.importLazyGroup('authenticated').then((results) => {
             window.dispatchEvent(new CustomEvent('resize'));
