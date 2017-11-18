@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polython-challenge-item.html">
 <link rel="import" href="shared-styles.html">
 
@@ -23,7 +24,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    <firebase-query
+      id="currentChallengeId"
+      app-name="Polython Checkpoints"
+      path="/activeChallenge"
+      data="{{currentCallengeId}}">
+    </firebase-query>
 
+    <firebase-query
+      id="currentChallenge"
+      app-name="polython-checkpoints"
+      path="/challenges/[[currentCallengeId]]"
+      data="{{currentCallenge}}">
+    </firebase-query>    
+
+    <firebase-query
+      id="pastChallenges"
+      app-name="polython-checkpoints"
+      path="/challenges"
+      data="{{challenges}}">
+    </firebase-query>    
+    <div>1 [[currentChallengeId]]</div>
+    <div>2 [[currentChallenge]]</div>
     <p>Retro actual<a href="/reto">reto</a></p>
     <iron-list items="[[challenges]]" >
       <template>
@@ -48,6 +70,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() {
         return {
+          currentChallengeId: {
+            type: 'String'
+          },
+          currentChallenge: {
+            type: 'Object'
+          },
           challenges: {
             type: 'Array'
           }
@@ -55,7 +83,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       connectedCallback() {
-        this.challenges = this._getChallenges();
+        //this.challenges = this._getChallenges();
       }
 
       _getChallenges() {
@@ -76,9 +104,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             startTime: '15:00',
             endTime: '15:30',
             executionTime: '15:21',
+<<<<<<< HEAD
             location: 'x, y',
             pictureHref: 'http://www.bellabeat.com/blog/media/Indulging-in-a-sweet-affair-with-chocolate-000048186060_Small.jpg',
             active: false
+=======
+            location: undefined,
+            pictureHref: 'http://www.bellabeat.com/blog/media/Indulging-in-a-sweet-affair-with-chocolate-000048186060_Small.jpg'
+>>>>>>> Added firebase query
           },          
           {
             title: 'Checkpoint con frida',
