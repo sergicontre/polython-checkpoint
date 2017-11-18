@@ -22,7 +22,11 @@
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "iron-list": "PolymerElements/iron-list#^2.0.11",
     "paper-button": "PolymerElements/paper-button#^2.0.0",
-    "flip-clock": "Granze/flip-clock#^2.0.1"
+    "flip-clock": "Granze/flip-clock#^2.0.1",
+    "paper-item": "PolymerElements/paper-item#^2.0.0",
+    "paper-input": "PolymerElements/paper-input#^2.0.3",
+    "paper-dialog": "PolymerElements/paper-dialog#^2.0.0",
+    "paper-fab": "PolymerElements/paper-fab#^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"

@@ -9,7 +9,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../bower_components/app-route-mixin/app-route-mixin.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="polython-challenge-item.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -20,15 +31,107 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
 
+      paper-fab {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+      }
+
     </style>
 
-		<p>Challenges</p>
+    <firebase-query
+      id="query"
+      path="[[dbPath]]"
+      data="{{challenges}}">
+    </firebase-query>
+
+    <firebase-document id="doc"></firebase-document>
+
+    <dom-repeat id="listTemplate" items="[[challenges]]">
+      <template>
+        <paper-item>
+          <paper-item-body two-line>
+            <div>[[item.title]]</div>
+            <div secondary>[[item.description]]</div>
+          </paper-item-body>
+        </paper-item>
+      </template>
+    </dom-repeat>
+
+    <paper-fab icon="my-icons:add" on-tap="openAddChallenge"></paper-fab>
+
+    <paper-dialog id="addChallenge">
+      <h2>Añadir Reto</h2>
+      <paper-input type="text" value="{{challengeData.title::input}}" label="Título"></paper-input>
+      <paper-textarea value="{{challengeData.description::input}}"  label="Descripción"></paper-textarea>
+      <paper-input type="number" value="{{challengeData.duration::input}}" label="Duración">
+        <div slot="suffix">minutos</div>
+      </paper-input>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancelar</paper-button>
+        <paper-button dialog-confirm on-tap="_saveChallenge">Añadir</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="editDialog">
+      <h2>Editar Reto</h2>
+      <paper-input type="text" value="{{challengeData.title::input}}" label="Título"></paper-input>
+      <paper-textarea value="{{challengeData.description::input}}"  label="Descripción"></paper-textarea>
+      <paper-input type="number" value="{{challengeData.duration::input}}" label="Duración">
+        <div slot="suffix">minutos</div>
+      </paper-input>
+      <div class="buttons">
+          <paper-button dialog-dismiss on-tap="_removeChallenge">Eliminar</paper-button>
+          <paper-button dialog-confirm on-tap="_saveChallenge">Guardar</paper-button>
+        </div>
+    </paper-dialog>
 
   </template>
 
   <script>
     class ViewAdminChallenges extends AppRouteMixin(Polymer.Element) {
       static get is() { return 'view-admin-challenges'; }
+      static get properties() {
+        return {
+          dbPath: {
+            type: String,
+            value: '/challenges'
+          },
+
+          challengeData: {
+            type: Object,
+            value: () => ({})
+          }
+        };
+      }
+
+      openAddChallenge() {
+        this.$.addChallenge.open();
+      }
+
+      _editChallenge(event) {
+        this.set('challengeData', event.model.item);
+        this.challengeId = this.challengeData.$key;
+        this.$.editDialog.open();
+      }
+
+      _saveChallenge() {
+        this.$.doc.path = null;
+        this.$.doc.data = {
+          title: this.challengeData.title,
+          description: this.challengeData.description,
+          duration: this.challengeData.duration
+        };
+        this.$.doc.saveValue(this.dbPath, this.challengeId);
+        //this.notifyPath('challenges.0.title');
+        this.challengeData = {};
+        this.challengeId = null;
+      }
+
+      _removeChallenge(event) {
+        this.challengeData = {}
+        this._saveChallenge();
+      }
     }
 
     window.customElements.define(ViewAdminChallenges.is, ViewAdminChallenges);
