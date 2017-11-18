@@ -110,6 +110,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #selfid[oculta]{
         display: none;
       }
+      #texto[muestra]{
+        display: block !important;
+      }
       
     </style>
 
@@ -128,6 +131,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <your-selfie id="selfid" screenshot="{{selfie}}"></your-selfie>
       <img id="imagen"></img>
+      <div id="texto" style="display: none;">Reto completado</div>
       <firebase-document id="fireChallenges">
       </firebase-document>
       <firebase-document id="fireChallengesQuery" path="{{fullPath}}" data="{{done}}">
@@ -172,6 +176,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             me.$.fireChallenges.data={selfie:me.selfie,timestamp:Date.now(),latitude:position.coords.latitude,longitude:position.coords.longitude};
             me.$.fireChallenges.saveValue("/userChallenges/"+me.loggedUser.uid,me.retoactive);
             me.$.selfid.setAttribute("oculta",true);
+            me.$.texto.setAttribute("muestra",true);
             me.$.imagen.src=me.selfie;
           });
         });
@@ -179,6 +184,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _onMyPropertyChanged(value){
         if(Object.keys(value).length){
           this.$.selfid.setAttribute("oculta",true);
+          this.$.texto.setAttribute("muestra",true);
           //this.$.imagen.src=value[Object.keys(value)[0]].selfie;
           this.$.imagen.src=value.selfie;
         }
