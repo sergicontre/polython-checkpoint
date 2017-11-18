@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="your-selfie">
@@ -103,8 +104,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     </style>
 
+    <firebase-auth
+        id="auth"
+        provider="google"
+        user="{{loggedUser}}"
+        signed-in="{{authenticated}}">
+    </firebase-auth>
+
+    <firebase-document 
+        path="/activeChallenge"
+        data="{{retoactive}}">
+    </firebase-document>
+
     <div class="card">
-      <your-selfie></your-selfie>
+      <your-selfie screenshot="{{selfie}}"></your-selfie>
+      <firebase-document 
+        path="/selfie/{{retoactive.$value}}/{{loggedUser.uid}}"
+        data="{{selfie}}">
+    </firebase-document>
     </div>
   </template>
 
