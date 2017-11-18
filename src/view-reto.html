@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="view-user">
+<dom-module id="view-reto">
   <template>
     <style include="shared-styles">
       :host {
@@ -19,22 +19,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         padding: 10px;
       }
+
+      img {
+          width: 100%;
+          height: auto;
+      }
+      
+      h1 {
+        text-align: center;
+      }
+      
     </style>
 
     <div class="card">
-      <div class="circle">U</div>
-      <h1>View User</h1>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.</p>
-      <p>Id nam odio natum malorum, tibique copiosae expetenda mel ea.Detracto suavitate repudiandae no eum. Id adhuc minim soluta nam.Id nam odio natum malorum, tibique copiosae expetenda mel ea.</p>
-      <a href="/reto">reto</a>
+      <h1>Polython Ciudad de México</h1>
+      <div id="logo">
+        <img src="../images/logo.png">        
+      </div>
     </div>
   </template>
 
   <script>
-    class ViewUser extends Polymer.Element {
-      static get is() { return 'view-user'; }
+    class ViewReto extends Polymer.Element {
+      static get is() { return 'view-reto'; }
     }
 
-    window.customElements.define(ViewUser.is, ViewUser);
+    window.customElements.define(ViewReto.is, ViewReto);
   </script>
 </dom-module>

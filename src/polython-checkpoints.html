@@ -27,11 +27,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="lazy-import" group="home" href="view-home.html">
   <link rel="lazy-import" group="admin" href="view-admin.html">
   <link rel="lazy-import" group="user" href="view-user.html">
+  <link rel="lazy-import" group="reto" href="view-reto.html">
   <link rel="lazy-import" group="view404" href="view-404.html">
 
   <link rel="lazy-import" group="authenticated" href="../bower_components/polymerfire/firebase-document.html">
   <link rel="lazy-import" group="admin" href="../bower_components/iron-selector/iron-selector.html">
-  <link rel="lazy-import" group="admin" href="../bower_components/iron-pages/iron-pages.html">
+  <link rel="lazy-import" group="authenticated" href="../bower_components/iron-pages/iron-pages.html">
   <link rel="lazy-import" group="admin" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 
   <template>
@@ -155,7 +156,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </iron-pages>
           </template>
           <template is="dom-if" if="[[!isAdmin(role)]]">
+             <iron-pages
+                selected="[[page]]"
+                attr-for-selected="name"
+                fallback-selection="view404"
+                role="main">
             <view-user name="user"></view-user>
+            <view-reto name="reto"></view-reto>
+            <view-404 name="view404"></view-404>
+            </iron-pages>
           </template>
         </template>
       </app-header-layout>

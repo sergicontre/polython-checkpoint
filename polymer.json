@@ -5,7 +5,8 @@
     "src/view-admin.html",
     "src/view-home.html",
     "src/view-user.html",
-    "src/view-404.html"
+    "src/view-404.html",
+    "src/view-reto.html",
   ],
   "sources": [
     "src/**/*",
