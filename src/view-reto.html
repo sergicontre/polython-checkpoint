@@ -11,6 +11,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 
+<dom-module id="your-selfie">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <video id="videoId" on-tap="snap" style="width: 100%;"></video>
+    <canvas id="canvas" style="display:none"></canvas>
+  </template>
+
+  <script>
+    /**
+     * `your-selfie`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class YourSelfie extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is() { return 'your-selfie'; }
+      static get properties() {
+        return {
+          screenshot: {
+            type: Object,
+            notify: true
+          }
+        };
+      }
+      ready() {
+        super.ready();
+
+        navigator.getMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia ||
+                       navigator.msGetUserMedia);
+
+        var videoObj = { "video": true,"audio": true };
+
+        var videoElement = this.$.videoId;
+        navigator.getMedia(videoObj, function(stream){
+                        videoElement.srcObject=stream;
+
+                        videoElement.play();
+                    }, function(error) {
+            console.log("Video capture error: ", error.code); 
+        });
+
+      }
+      snap(){
+            var canvas = this.$.canvas;
+            var videoObj = this.$.videoId;
+
+            var context = canvas.getContext('2d');
+
+            videoObj.setAttribute('width', videoObj.clientWidth);
+            videoObj.setAttribute('height', videoObj.clientHeight);
+
+            canvas.width = videoObj.clientWidth;
+            canvas.height = videoObj.clientHeight;
+            
+            context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
+
+            this.screenshot = canvas.toDataURL('image/png');
+      }
+    }
+
+    window.customElements.define(YourSelfie.is, YourSelfie);
+  </script>
+</dom-module>
+
 <dom-module id="view-reto">
   <template>
     <style include="shared-styles">
@@ -32,10 +104,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <h1>Polython Ciudad de México</h1>
-      <div id="logo">
-        <img src="../images/logo.png">        
-      </div>
+      <your-selfie></your-selfie>
     </div>
   </template>
 
