@@ -146,10 +146,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-pages
                 selected="[[page]]"
                 attr-for-selected="name"
-                fallback-selection="view404"
+								fallback-selection="view404"
+								selected-attribute="active"
                 role="main">
               <template is="dom-if" if="[[isAdmin(role)]]">
-                <view-admin name="admin"></view-admin>
+                <view-admin name="admin" route="{{subroute}}"></view-admin>
               </template>
               <view-user name="user"></view-user>
               <view-404 name="view404"></view-404>
@@ -216,13 +217,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return this.authenticated ? 'user' : 'home';
       }
 
-      constructor() {
-        super();
-      }
-
       connectedCallback() {
         super.connectedCallback();
-				this.active = true;
+        this.active = true;
         if (this.hostDomain) {
           Polymer.Async.idlePeriod.run(function(){
             var _providerFromName = this.$.auth._providerFromName;

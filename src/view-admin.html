@@ -9,29 +9,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/lazy-imports/lazy-imports-mixin.html">
+<link rel="import" href="../bower_components/app-route-mixin/app-route-mixin.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="view-admin">
+  <link rel="lazy-import" group="challenges" href="view-admin-challenges.html">
+  <link rel="lazy-import" group="users" href="view-admin-users.html">
+  <link rel="lazy-import" group="teams" href="view-admin-teams.html">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
 
         padding: 10px;
+
+        --paper-tabs-selection-bar-color: var(--app-primary-color);
+        --paper-tab-ink: var(--app-primary-color);
       }
+
     </style>
 
-    <div class="card">
-      <div class="circle">A</div>
-      <h1>Admin</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-    </div>
+    <paper-tabs
+      selected="{{page}}"
+      attr-for-selected="name"
+      fallback-selection="challenges">
+      <paper-tab name="challenges">Challenges</paper-tab>
+      <paper-tab name="users">Users</paper-tab>
+      <paper-tab name="teams">Teams</paper-tab>
+    </paper-tabs>
+
+    <iron-pages
+      selected="[[page]]"
+      attr-for-selected="name"
+      selected-attribute="active">
+      <view-admin-challenges name="challenges"></view-admin-challenges>
+      <view-admin-users name="users"></view-admin-users>
+      <view-admin-teams name="teams"></view-admin-teams>
+    </iron-pages>
   </template>
 
   <script>
-    class ViewAdmin extends Polymer.Element {
+    class ViewAdmin extends AppRouteMixin(Polymer.LazyImportsMixin(Polymer.Element)) {
       static get is() { return 'view-admin'; }
+
+      static get observers(){
+        return [
+          '_pageChanged(page)'
+        ];
+      }
+
+      _pageChanged(page) {
+        this.importLazyGroup(page);
+      }
     }
 
     window.customElements.define(ViewAdmin.is, ViewAdmin);
