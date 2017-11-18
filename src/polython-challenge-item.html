@@ -68,10 +68,12 @@
         <p class="polython-challenge-light">[[description]]</p>
       </div>
       <div class="card-actions">
-        <div class="buttons-action">
-          <flip-clock display-mode="countdown" auto start-from="20" hide-hours></flip-clock>
-          <paper-button class="polython-challenge-reserve">Do it!</paper-button>
-        </div>
+          <template is="dom-if" if="{{active}}">
+              <div class="buttons-action">
+                  <flip-clock display-mode="countdown" auto start-from="20" hide-hours></flip-clock>
+                  <paper-button class="polython-challenge-reserve">Do it!</paper-button>
+                </div>
+          </template> 
       </div>
     </paper-card>
   </template>
@@ -104,6 +106,10 @@
           },
           location: {
             type: 'String'
+          },
+          active: {
+            type: 'Boolean',
+            value: false
           }
         }
       }
