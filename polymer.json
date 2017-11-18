@@ -1,13 +1,7 @@
 {
   "entrypoint": "index.html",
   "shell": "src/polython-checkpoints.html",
-  "fragments": [
-    "src/view-admin.html",
-    "src/view-home.html",
-    "src/view-user.html",
-    "src/view-404.html",
-    "src/view-reto.html",
-  ],
+  "fragments": [],
   "sources": [
     "src/**/*",
     "images/**/*",
