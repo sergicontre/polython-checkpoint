@@ -49,25 +49,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       data="{{userChallenges}}">
     </firebase-query>
 
-		<dom-if if="_showCurrentChallenge(currentCallenge, userChallenges)">
-			<template>
-				<p>Reto actual</p>
-				<polython-challenge-item
-					title=[[currentChallenge.title]]
-					description=[[currentChallenge.description]]
-					start-time=[[currentChallenge.startTime]]
-					end-time=[[currentChallenge.endTime]]
-					execution-time=[[currentChallenge.executionTime]]
-					picture-href=[[currentChallenge.picture]]
-					location=[[currentChallenge.location]]
-					active=[[currentChallenge.active]] >
-				</polython-challenge-item>
-			</template>
-		</dom-if>
+    <dom-if if="[[_showCurrentChallenge(currentChallengeId, userChallenges.*)]]">
+      <template>
+        <p>Reto actual</p>
+        <polython-challenge-item
+          title=[[currentChallenge.title]]
+          description=[[currentChallenge.description]]
+          start-time=[[currentChallenge.startTime]]
+          end-time=[[currentChallenge.endTime]]
+          execution-time=[[currentChallenge.executionTime]]
+          picture-href=[[currentChallenge.picture]]
+          location=[[currentChallenge.location]]
+          active=[[currentChallenge.active]] >
+        </polython-challenge-item>
+      </template>
+    </dom-if>
 
     <dom-if if="[[userChallenges.length]]">
       <template>
-        <p>Retos pasados</p>
+        <p>Retos enviados</p>
         <dom-repeat items="[[userChallenges]]">
           <template>
             <firebase-document
@@ -109,12 +109,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       _userChallengesPath(loggedUser) {
         return loggedUser ? 'userChallenges/' + loggedUser.uid : null;
-			}
+      }
 
-			_showCurrentChallenge(currentCallenge, userChallenges) {
-				debugger;
-				return userChallenges.find((item) => item.$key === currentCallenge.$key);
-			}
+      _showCurrentChallenge(currentChallengeId, userChallengesChanges) {
+        let show = !this.userChallenges.length;
+        if (currentChallengeId ) {
+          show = !this.userChallenges.find(item => item.$key === currentChallengeId);
+        }
+        return show;
+      }
     }
 
     window.customElements.define(ViewUser.is, ViewUser);
