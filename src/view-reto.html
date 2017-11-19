@@ -11,83 +11,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="shared-styles.html">
-
-<dom-module id="your-selfie">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <video id="videoId" on-tap="snap" style="width: 100%;"></video>
-    <canvas id="canvas" style="display:none"></canvas>
-  </template>
-
-  <script>
-    /**
-     * `your-selfie`
-     *
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     */
-    class YourSelfie extends Polymer.GestureEventListeners(Polymer.Element) {
-      static get is() { return 'your-selfie'; }
-      static get properties() {
-        return {
-          screenshot: {
-            type: Object,
-            notify: true
-          }
-        };
-      }
-      ready() {
-        super.ready();
-
-        navigator.getMedia = ( navigator.getUserMedia ||
-                       navigator.webkitGetUserMedia ||
-                       navigator.mozGetUserMedia ||
-                       navigator.msGetUserMedia);
-
-        var videoObj = { "video": true,"audio": false };
-
-        var videoElement = this.$.videoId;
-        navigator.getMedia(videoObj, function(stream){
-                        videoElement.srcObject=stream;
-
-                        videoElement.play();
-                    }, function(error) {
-            console.log("Video capture error: ", error.code);
-        });
-
-      }
-      snap(){
-            var canvas = this.$.canvas;
-            var videoObj = this.$.videoId;
-
-            var context = canvas.getContext('2d');
-
-            videoObj.setAttribute('width', videoObj.clientWidth);
-            videoObj.setAttribute('height', videoObj.clientHeight);
-
-            canvas.width = videoObj.clientWidth;
-            canvas.height = videoObj.clientHeight;
-
-            context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
-
-            this.screenshot = canvas.toDataURL('image/png');
-            this.dispatchEvent(new CustomEvent('snap-launched'));
-
-            this.$.videoId.pause();
-
-      }
-    }
-
-    window.customElements.define(YourSelfie.is, YourSelfie);
-  </script>
-</dom-module>
+<link rel="import" href="your-selfie.html">
 
 <dom-module id="view-reto">
   <template>
@@ -98,20 +25,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
       }
 
-      img {
-          width: 100%;
-          height: auto;
+      paper-card {
+        width: 100%;
       }
 
-      h1 {
-        text-align: center;
-      }
-
-      #selfid[oculta]{
+      [hidden]{
         display: none;
-      }
-      #texto[muestra]{
-        display: block !important;
       }
 
     </style>
@@ -128,16 +47,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{retoactive}}">
     </firebase-document>
 
-    <div class="card">
-      <your-selfie id="selfid" screenshot="{{selfie}}"></your-selfie>
-      <img id="imagen"></img>
-      <div id="texto" style="display: none;">Reto completado</div>
-      <firebase-document id="fireChallenges">
-      </firebase-document>
-      <firebase-document id="fireChallengesQuery" path="{{fullPath}}" data="{{done}}">
-      </firebase-document>
-      <!--firebase-query path="/userChallenges/{{loggedUser.uid}}/{{retoactive.value}}" data="{{done}}">
-      </firebase-query-->
+    <firebase-document id="fireChallenges"></firebase-document>
+    <firebase-document
+      id="fireChallengesQuery"
+      path="{{fullPath}}"
+      data="{{done}}">
+    </firebase-document>
+
+    <paper-card image="[[selfie]]">
+      <div class="card-content">
+        <your-selfie id="selfid" hidden="[[selfie]]" screenshot="{{selfie}}"></your-selfie>
+        [[text]]
+      </div>
     </div>
   </template>
 
@@ -159,7 +80,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           fullPath: {
             type: String
-          }
+          },
+          selfie: {
+            type: String,
+            value: ''
+          },
+          text: {
+            type: String,
+            value: 'Pulsa en la imagen para enviar el reto'
+          },
         };
       }
       static get observers() {
@@ -172,12 +101,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         super.ready();
         var me=this;
         this.$.selfid.addEventListener('snap-launched', () => {
+          this.text = 'Enviado reto...';
           navigator.geolocation.getCurrentPosition(position => {
-            this.$.fireChallenges.data={selfie:this.selfie,timestamp:Date.now(),latitude:position.coords.latitude,longitude:position.coords.longitude};
-            this.$.fireChallenges.saveValue("/userChallenges/"+this.loggedUser.uid,this.retoactive);
-            this.$.selfid.setAttribute("oculta",true);
-            this.$.texto.setAttribute("muestra",true);
-            this.$.imagen.src=this.selfie;
+            this.$.fireChallenges.path = null;
+            this.$.fireChallenges.data = {
+              selfie: this.selfie,
+              timestamp: Date.now(),
+              latitude: position.coords.latitude,
+              longitude:position.coords.longitude
+            };
+            this.$.fireChallenges.saveValue("/userChallenges/"+this.loggedUser.uid, this.retoactive);
+            this.text = 'Reto enviado';
             this.dispatchEvent(new CustomEvent('challenge-finished', {bubbles: true, composed: true}));
           });
         });
