@@ -22,6 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" async href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" async href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" async href="my-icons.html">
+<link rel="import" href="service-worker.html">
 
 <dom-module id="polython-checkpoints">
   <link rel="lazy-import" group="home" href="view-home.html">
@@ -170,7 +171,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </template>
       </app-header-layout>
-    </app-drawer-layout>
+		</app-drawer-layout>
+		<service-worker></service-worker>
   </template>
 
   <script>

@@ -1,75 +1,77 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
 <dom-module id="your-selfie">
-		<template>
-			<style>
-				:host {
-					display: block;
-				}
-			</style>
-			<video id="videoId" on-tap="snap" style="width: 100%;"></video>
-			<canvas id="canvas" style="display:none"></canvas>
-		</template>
+    <template>
+      <style>
+        :host {
+          display: block;
+        }
+      </style>
+      <video id="videoId" on-tap="snap" style="width: 100%;"></video>
+      <canvas id="canvas" style="display:none"></canvas>
+    </template>
 
-		<script>
-			/**
-			 * `your-selfie`
-			 *
-			 *
-			 * @customElement
-			 * @polymer
-			 * @demo demo/index.html
-			 */
-			class YourSelfie extends Polymer.GestureEventListeners(Polymer.Element) {
-				static get is() { return 'your-selfie'; }
-				static get properties() {
-					return {
-						screenshot: {
-							type: Object,
-							notify: true
-						}
-					};
-				}
-				ready() {
-					super.ready();
+    <script>
+      /**
+       * `your-selfie`
+       *
+       *
+       * @customElement
+       * @polymer
+       * @demo demo/index.html
+       */
+      class YourSelfie extends Polymer.GestureEventListeners(Polymer.Element) {
+        static get is() { return 'your-selfie'; }
+        static get properties() {
+          return {
+            screenshot: {
+              type: Object,
+              notify: true
+            }
+          };
+        }
+        ready() {
+          super.ready();
 
-					navigator.getMedia = ( navigator.getUserMedia ||
-												 navigator.webkitGetUserMedia ||
-												 navigator.mozGetUserMedia ||
-												 navigator.msGetUserMedia);
+          navigator.getMedia = ( navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia ||
+                         navigator.msGetUserMedia);
 
-					var videoObj = { "video": true,"audio": false };
+          var videoObj = { "video": true,"audio": false };
 
-					var videoElement = this.$.videoId;
-					navigator.getMedia(videoObj, function(stream){
-													videoElement.srcObject=stream;
+          var videoElement = this.$.videoId;
+          navigator.getMedia(videoObj, function(stream){
+                          videoElement.srcObject=stream;
 
-													videoElement.play();
-											}, function(error) {
-							console.log("Video capture error: ", error.code);
-					});
+                          videoElement.play();
+                      }, function(error) {
+              console.log("Video capture error: ", error.code);
+          });
 
-				}
-				snap(){
-							var canvas = this.$.canvas;
-							var videoObj = this.$.videoId;
+        }
+        snap(){
+              var canvas = this.$.canvas;
+              var videoObj = this.$.videoId;
 
-							var context = canvas.getContext('2d');
+              var context = canvas.getContext('2d');
 
-							videoObj.setAttribute('width', videoObj.clientWidth);
-							videoObj.setAttribute('height', videoObj.clientHeight);
+              videoObj.setAttribute('width', videoObj.clientWidth);
+              videoObj.setAttribute('height', videoObj.clientHeight);
 
-							canvas.width = videoObj.clientWidth;
-							canvas.height = videoObj.clientHeight;
+              canvas.width = videoObj.clientWidth;
+              canvas.height = videoObj.clientHeight;
 
-							context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
+              context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
 
-							this.screenshot = canvas.toDataURL('image/png');
-							this.dispatchEvent(new CustomEvent('snap-launched'));
+              this.screenshot = canvas.toDataURL('image/png');
+              this.dispatchEvent(new CustomEvent('snap-launched'));
 
-							this.$.videoId.pause();
+              this.$.videoId.pause();
 
-				}
-			}
+        }
+      }
 
-			window.customElements.define(YourSelfie.is, YourSelfie);
-		</script>
-	</dom-module>
+      window.customElements.define(YourSelfie.is, YourSelfie);
+    </script>
+  </dom-module>

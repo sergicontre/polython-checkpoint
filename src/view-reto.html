@@ -101,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         super.ready();
         var me=this;
         this.$.selfid.addEventListener('snap-launched', () => {
-          this.text = 'Enviado reto...';
+          this.text = 'Enviando reto...';
           navigator.geolocation.getCurrentPosition(position => {
             this.$.fireChallenges.path = null;
             this.$.fireChallenges.data = {
