@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/geo-location/geo-location.html">
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="your-selfie.html">
+<link rel="import" href="form-challenge.html">
 
 <dom-module id="view-reto">
   <template>
@@ -56,13 +56,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		</firebase-document>
 
 		<geo-location latitude="{{latitude}}" longitude="{{longitude}}"></geo-location>
-
-    <paper-card image="[[selfie]]">
-      <div class="card-content">
-        <your-selfie id="selfid" video hidden="[[selfie]]" screenshot="{{selfie}}"></your-selfie>
-        [[text]]
-      </div>
-    </div>
+    <form-challenge id="formResponse"></form-challenge>
+    
   </template>
 
   <script>
@@ -84,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           fullPath: {
             type: String
           },
-          selfie: {
+          response: {
             type: String,
             value: ''
 					},
@@ -99,17 +94,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get observers() {
         return [
 						'userNameChanged(loggedUser,retoactive)',
-						'sendChallenge(selfie, latitude, longitude)'
+						'sendChallenge(response, latitude, longitude)'
         ]
       }
 
-			sendChallenge(selfie, latitude, longitude) {
-				if (selfie) {
+      ready() {
+        super.ready();
+        this.$.formResponse.addEventListener('challenge-response',this._handleResponse.bind(this));
+      }
+
+			sendChallenge(response, latitude, longitude) {
+				if (response) {
 					this.text = 'Enviando reto...';
 					if (latitude && longitude) {
 						this.$.fireChallenges.path = null;
 						this.$.fireChallenges.data = {
-							selfie: selfie,
+							response: response,
 							timestamp: Date.now(),
 							latitude: latitude,
 							longitude: longitude
@@ -122,6 +122,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					}
 				}
 			}
+
+      _handleResponse(resp){
+        this.set('response',resp.detail);
+      }
 
       _onMyPropertyChanged(value){
         if(Object.keys(value).length){
