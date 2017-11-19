@@ -54,10 +54,6 @@
           display: inline-flex;
         }
 
-        #goToChallenge {
-          text-decoration: none;
-        }
-
       </style>
     </custom-style>
 
@@ -76,7 +72,7 @@
         <div class="card-actions">
           <div class="buttons-action">
             <flip-clock display-mode="countdown" auto start-from="[[timeLeft(endTime)]]" hide-hours></flip-clock>
-            <a id="goToChallenge" href="/reto"><paper-button class="polython-challenge-reserve">Do it!</paper-button>
+            <paper-button class="polython-challenge-reserve" on-tap="goChallenge">Do it!</paper-button>
           </div>
         </div>
       </template>
@@ -119,10 +115,14 @@
           }
         }
       }
-      
+
       timeLeft(endTime) {
         return (endTime - Date.now()) / 60000
-      }
+			}
+
+			goChallenge() {
+				this.dispatchEvent(new CustomEvent('go-challenge', {bubbles: true, composed: true}));
+			}
     }
 
     window.customElements.define(PolythonChallengeItem.is, PolythonChallengeItem);

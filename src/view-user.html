@@ -52,7 +52,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <dom-if if="[[_showCurrentChallenge(currentChallengeId, userChallenges.*)]]">
       <template>
         <p>Reto actual</p>
-        <polython-challenge-item
+				<polython-challenge-item
           title=[[currentChallenge.title]]
           description=[[currentChallenge.description]]
           start-time=[[currentChallenge.startTime]]
@@ -112,12 +112,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _showCurrentChallenge(currentChallengeId, userChallengesChanges) {
-        let show = !this.userChallenges.length;
+        let show = true;
         if (currentChallengeId ) {
           show = !this.userChallenges.find(item => item.$key === currentChallengeId);
         }
         return show;
-      }
+			}
     }
 
     window.customElements.define(ViewUser.is, ViewUser);

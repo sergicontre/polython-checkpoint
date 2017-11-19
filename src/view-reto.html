@@ -27,7 +27,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     /**
      * `your-selfie`
-     * 
+     *
      *
      * @customElement
      * @polymer
@@ -59,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                         videoElement.play();
                     }, function(error) {
-            console.log("Video capture error: ", error.code); 
+            console.log("Video capture error: ", error.code);
         });
 
       }
@@ -74,7 +74,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             canvas.width = videoObj.clientWidth;
             canvas.height = videoObj.clientHeight;
-            
+
             context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
 
             this.screenshot = canvas.toDataURL('image/png');
@@ -102,7 +102,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           width: 100%;
           height: auto;
       }
-      
+
       h1 {
         text-align: center;
       }
@@ -113,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #texto[muestra]{
         display: block !important;
       }
-      
+
     </style>
 
     <firebase-auth
@@ -148,7 +148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return {
           loggedUser: {
             type: Object,
-            observer: '_userChanged'            
+            observer: '_userChanged'
           },
           done: {
             type:Object,
@@ -171,14 +171,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready(){
         super.ready();
         var me=this;
-        this.$.selfid.addEventListener('snap-launched',function(){
-          navigator.geolocation.getCurrentPosition(function(position){
-            me.$.fireChallenges.data={selfie:me.selfie,timestamp:Date.now(),latitude:position.coords.latitude,longitude:position.coords.longitude};
-            me.$.fireChallenges.saveValue("/userChallenges/"+me.loggedUser.uid,me.retoactive);
-            me.$.selfid.setAttribute("oculta",true);
-            me.$.texto.setAttribute("muestra",true);
-            me.$.imagen.src=me.selfie;
-            me.$.dispatchEvent(new CustomEvent('challenge-finished'));
+        this.$.selfid.addEventListener('snap-launched', () => {
+          navigator.geolocation.getCurrentPosition(position => {
+            this.$.fireChallenges.data={selfie:this.selfie,timestamp:Date.now(),latitude:position.coords.latitude,longitude:position.coords.longitude};
+            this.$.fireChallenges.saveValue("/userChallenges/"+this.loggedUser.uid,this.retoactive);
+            this.$.selfid.setAttribute("oculta",true);
+            this.$.texto.setAttribute("muestra",true);
+            this.$.imagen.src=this.selfie;
+            this.dispatchEvent(new CustomEvent('challenge-finished', {bubbles: true, composed: true}));
           });
         });
       }

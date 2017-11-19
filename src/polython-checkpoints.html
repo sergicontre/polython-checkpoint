@@ -146,14 +146,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-pages
                 selected="[[page]]"
                 attr-for-selected="name"
-								fallback-selection="view404"
-								selected-attribute="active"
+                fallback-selection="view404"
+                selected-attribute="active"
                 role="main">
               <template is="dom-if" if="[[isAdmin(role)]]">
                 <view-admin name="admin" route="{{subroute}}"></view-admin>
               </template>
-              <view-user name="user"></view-user>
-              <view-reto name="reto"></view-reto>              
+              <view-user name="user" on-go-challenge="goChallenge"></view-user>
+              <view-reto name="reto" on-challenge-finished="goUser"></view-reto>
               <view-404 name="view404"></view-404>
             </iron-pages>
           </template>
@@ -163,8 +163,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 attr-for-selected="name"
                 fallback-selection="view404"
                 role="main">
-            <view-user name="user"></view-user>
-            <view-reto name="reto"></view-reto>
+            <view-user name="user" on-go-challenge="goChallenge"></view-user>
+            <view-reto name="reto" on-challenge-finished="goUser"></view-reto>
             <view-404 name="view404"></view-404>
             </iron-pages>
           </template>
@@ -300,6 +300,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       isAdmin(role) {
         return role === 'admin';
+      }
+      goChallenge() {
+        this.page = 'reto';
+			}
+			goUser() {
+        this.page = 'user';
       }
     }
 
