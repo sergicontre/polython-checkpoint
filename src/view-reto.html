@@ -178,6 +178,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             me.$.selfid.setAttribute("oculta",true);
             me.$.texto.setAttribute("muestra",true);
             me.$.imagen.src=me.selfie;
+            me.$.dispatchEvent(new CustomEvent('challenge-finished'));
           });
         });
       }
