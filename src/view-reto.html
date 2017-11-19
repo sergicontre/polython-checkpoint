@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/geo-location/geo-location.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="your-selfie.html">
 
@@ -52,11 +53,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       id="fireChallengesQuery"
       path="{{fullPath}}"
       data="{{done}}">
-    </firebase-document>
+		</firebase-document>
+
+		<geo-location latitude="{{latitude}}" longitude="{{longitude}}"></geo-location>
 
     <paper-card image="[[selfie]]">
       <div class="card-content">
-        <your-selfie id="selfid" hidden="[[selfie]]" screenshot="{{selfie}}"></your-selfie>
+        <your-selfie id="selfid" video hidden="[[selfie]]" screenshot="{{selfie}}"></your-selfie>
         [[text]]
       </div>
     </div>
@@ -84,7 +87,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           selfie: {
             type: String,
             value: ''
-          },
+					},
+					latitude: Number,
+					longitude: Number,
           text: {
             type: String,
             value: 'Pulsa en la imagen para enviar el reto'
@@ -93,29 +98,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       static get observers() {
         return [
-            'userNameChanged(loggedUser,retoactive)'
+						'userNameChanged(loggedUser,retoactive)',
+						'sendChallenge(selfie, latitude, longitude)'
         ]
       }
 
-      ready(){
-        super.ready();
-        var me=this;
-        this.$.selfid.addEventListener('snap-launched', () => {
-          this.text = 'Enviando reto...';
-          navigator.geolocation.getCurrentPosition(position => {
-            this.$.fireChallenges.path = null;
-            this.$.fireChallenges.data = {
-              selfie: this.selfie,
-              timestamp: Date.now(),
-              latitude: position.coords.latitude,
-              longitude:position.coords.longitude
-            };
-            this.$.fireChallenges.saveValue("/userChallenges/"+this.loggedUser.uid, this.retoactive);
-            this.text = 'Reto enviado';
-            this.dispatchEvent(new CustomEvent('challenge-finished', {bubbles: true, composed: true}));
-          });
-        });
-      }
+			sendChallenge(selfie, latitude, longitude) {
+				if (selfie) {
+					this.text = 'Enviando reto...';
+					if (latitude && longitude) {
+						this.$.fireChallenges.path = null;
+						this.$.fireChallenges.data = {
+							selfie: selfie,
+							timestamp: Date.now(),
+							latitude: latitude,
+							longitude: longitude
+						};
+						this.$.fireChallenges.saveValue("/userChallenges/"+this.loggedUser.uid, this.retoactive);
+						this.text = 'Reto enviado';
+						setTimeout(() => {
+							this.dispatchEvent(new CustomEvent('challenge-finished', {bubbles: true, composed: true}));
+						}, 1000);
+					}
+				}
+			}
+
       _onMyPropertyChanged(value){
         if(Object.keys(value).length){
           this.$.selfid.setAttribute("oculta",true);

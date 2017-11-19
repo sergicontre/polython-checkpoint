@@ -2,77 +2,88 @@
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 
 <dom-module id="your-selfie">
-    <template>
-      <style>
-        :host {
-          display: block;
-        }
-      </style>
-      <video id="videoId" on-tap="snap" style="width: 100%;"></video>
-      <canvas id="canvas" style="display:none"></canvas>
-    </template>
-
-    <script>
-      /**
-       * `your-selfie`
-       *
-       *
-       * @customElement
-       * @polymer
-       * @demo demo/index.html
-       */
-      class YourSelfie extends Polymer.GestureEventListeners(Polymer.Element) {
-        static get is() { return 'your-selfie'; }
-        static get properties() {
-          return {
-            screenshot: {
-              type: Object,
-              notify: true
-            }
-          };
-        }
-        ready() {
-          super.ready();
-
-          navigator.getMedia = ( navigator.getUserMedia ||
-                         navigator.webkitGetUserMedia ||
-                         navigator.mozGetUserMedia ||
-                         navigator.msGetUserMedia);
-
-          var videoObj = { "video": true,"audio": false };
-
-          var videoElement = this.$.videoId;
-          navigator.getMedia(videoObj, function(stream){
-                          videoElement.srcObject=stream;
-
-                          videoElement.play();
-                      }, function(error) {
-              console.log("Video capture error: ", error.code);
-          });
-
-        }
-        snap(){
-              var canvas = this.$.canvas;
-              var videoObj = this.$.videoId;
-
-              var context = canvas.getContext('2d');
-
-              videoObj.setAttribute('width', videoObj.clientWidth);
-              videoObj.setAttribute('height', videoObj.clientHeight);
-
-              canvas.width = videoObj.clientWidth;
-              canvas.height = videoObj.clientHeight;
-
-              context.drawImage(videoObj, 0, 0, canvas.width, canvas.height);
-
-              this.screenshot = canvas.toDataURL('image/png');
-              this.dispatchEvent(new CustomEvent('snap-launched'));
-
-              this.$.videoId.pause();
-
-        }
+  <template>
+    <style>
+      :host {
+        display: block;
       }
+    </style>
+    <video id="video" on-tap="snap" style="width: 100%;"></video>
+    <canvas id="canvas" style="display:none"></canvas>
+  </template>
 
-      window.customElements.define(YourSelfie.is, YourSelfie);
-    </script>
-  </dom-module>
+  <script>
+    /**
+    * `your-selfie`
+    *
+    *
+    * @customElement
+    * @polymer
+    * @demo demo/index.html
+    */
+    class YourSelfie extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is() { return 'your-selfie'; }
+      static get properties() {
+        return {
+          video: Boolean,
+          audio: Boolean,
+          screenshot: {
+            type: Object,
+            notify: true
+          },
+          stream: Object
+        };
+      }
+      ready() {
+        super.ready();
+        window.URL = window.URL || window.webkitURL;
+        navigator.getMedia = ( navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia ||
+        navigator.msGetUserMedia);
+
+        var config = {
+          "video": this.video,
+          "audio": this.audio
+        };
+
+        navigator.getMedia(
+          config,
+          stream => {
+            this.stream = stream;
+            this.$.video.src = URL.createObjectURL(stream);
+            this.$.video.play();
+          },
+          error => {
+            console.log("Video capture error: ", error.code);
+          }
+        );
+
+      }
+      snap(){
+        var canvas = this.$.canvas;
+        var video = this.$.video;
+
+        var context = canvas.getContext('2d');
+
+        video.setAttribute('width', video.clientWidth);
+        video.setAttribute('height', video.clientHeight);
+
+        canvas.width = video.clientWidth;
+        canvas.height = video.clientHeight;
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        this.screenshot = canvas.toDataURL('image/png');
+        this.dispatchEvent(new CustomEvent('snap-launched'));
+
+        this.$.video.pause();
+				let tracks = this.stream.getTracks();
+				tracks.forEach(track => track.stop());
+
+      }
+    }
+
+    window.customElements.define(YourSelfie.is, YourSelfie);
+  </script>
+</dom-module>
