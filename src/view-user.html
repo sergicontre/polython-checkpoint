@@ -24,29 +24,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <firebase-query
-      id="currentChallengeId"
-      app-name="Polython Checkpoints"
+    <firebase-document
       path="/activeChallenge"
-      data="{{currentCallengeId}}">
-    </firebase-query>
+      data="{{currentChallengeId}}">
+    </firebase-document>
 
     <firebase-query
       id="currentChallenge"
-      app-name="polython-checkpoints"
-      path="/challenges/[[currentCallengeId]]"
+      path="[[pathCurrentChallenge]]"
       data="{{currentCallenge}}">
     </firebase-query>    
 
     <firebase-query
       id="pastChallenges"
-      app-name="polython-checkpoints"
       path="/challenges"
       data="{{challenges}}">
     </firebase-query>    
-    <div>1 [[currentChallengeId]]</div>
-    <div>2 [[currentChallenge]]</div>
-    <p>Retro actual<a href="/reto">reto</a></p>
+
+
+    <p>Reto actual <a href="/reto">reto</a></p>
+    <polython-challenge-item
+      title=[[item.title]]
+      description=[[item.description]]
+      start-time=[[item.startTime]]
+      end-time=[[item.endTime]]
+      execution-time=[[item.executionTime]]
+      picture-href=[[item.pictureHref]]
+      location=[[item.location]] >
+    </polython-challenge-item>
+
+    <p>Retos pasados</p>
     <iron-list items="[[challenges]]" >
       <template>
         <polython-challenge-item
@@ -73,8 +80,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           currentChallengeId: {
             type: 'String'
           },
+          pathCurrentChallenge: {
+            type: 'String',
+            computed: '_computePathForCurrentChallenge(currentChallengeId)'
+          },
           currentChallenge: {
-            type: 'Object'
+            type: 'Object',
           },
           challenges: {
             type: 'Array'
@@ -82,8 +93,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      connectedCallback() {
-        //this.challenges = this._getChallenges();
+      _computePathForCurrentChallenge(currentChallengeId) {
+        if (currentChallengeId instanceof String) {
+          return '/challenges/' + currentChallengeId;
+        } else {
+          return '';
+        }
       }
 
       _getChallenges() {
