@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+
+<dom-module id="form-challenge">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .button-send {
+        display:inline-block;
+      }
+      
+    </style>
+    <paper-input id="response" always-float-label label="[[question]]"></paper-input>
+    <div class="button-send">
+        <paper-button id="sendButton" on-tap="send" toggles raised>Enviar</paper-button>
+    </div>
+  </template>
+
+  <script>
+    /**
+    * `form-challenge`
+    *
+    *
+    * @customElement
+    * @polymer
+    * @demo demo/index.html
+    */
+    class FormChallenge extends Polymer.Element {
+      static get is() { return 'form-challenge'; }
+      static get properties() {
+        return {
+          question: {
+            type:'String',
+            value: 'Respuesta'
+          }
+        };
+      }
+      send(){
+        this.dispatchEvent(new CustomEvent('challenge-response',{bubbles: true, composed: true ,'detail': this.$.response.value }));
+      }
+    }
+
+    window.customElements.define(FormChallenge.is, FormChallenge);
+  </script>
+</dom-module>
