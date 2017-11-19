@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" async href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
@@ -45,27 +45,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <firebase-query
       id="pastChallenges"
-      path="[[_userChallenges(loggedUser)]]"
-      data="{{challenges}}">
+      path="[[_userChallengesPath(loggedUser)]]"
+      data="{{userChallenges}}">
     </firebase-query>
 
+		<dom-if if="_showCurrentChallenge(currentCallenge, userChallenges)">
+			<template>
+				<p>Reto actual</p>
+				<polython-challenge-item
+					title=[[currentChallenge.title]]
+					description=[[currentChallenge.description]]
+					start-time=[[currentChallenge.startTime]]
+					end-time=[[currentChallenge.endTime]]
+					execution-time=[[currentChallenge.executionTime]]
+					picture-href=[[currentChallenge.picture]]
+					location=[[currentChallenge.location]]
+					active=[[currentChallenge.active]] >
+				</polython-challenge-item>
+			</template>
+		</dom-if>
 
-    <p>Reto actual</p>
-    <polython-challenge-item
-      title=[[currentChallenge.title]]
-      description=[[currentChallenge.description]]
-      start-time=[[currentChallenge.startTime]]
-      end-time=[[currentChallenge.endTime]]
-      execution-time=[[currentChallenge.executionTime]]
-      picture-href=[[currentChallenge.picture]]
-      location=[[currentChallenge.location]]
-      active=[[currentChallenge.active]] >
-    </polython-challenge-item>
-
-    <dom-if if="[[challenges.length]]">
+    <dom-if if="[[userChallenges.length]]">
       <template>
         <p>Retos pasados</p>
-        <iron-list items="[[challenges]]" >
+        <dom-repeat items="[[userChallenges]]">
           <template>
             <firebase-document
               id="currentChallenge"
@@ -78,7 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             picture-href=[[item.selfie]]>
             </polython-challenge-item>
           </template>
-        </iron-list>
+        </dom-repeat>
       </template>
     </dom-if>
   </template>
@@ -104,9 +107,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _currentChallengePath(currentChallengeId) {
         return typeof currentChallengeId === 'string' ? '/challenges/' + currentChallengeId : null;
       }
-      _userChallenges(loggedUser) {
+      _userChallengesPath(loggedUser) {
         return loggedUser ? 'userChallenges/' + loggedUser.uid : null;
-      }
+			}
+
+			_showCurrentChallenge(currentCallenge, userChallenges) {
+				debugger;
+				return userChallenges.find((item) => item.$key === currentCallenge.$key);
+			}
     }
 
     window.customElements.define(ViewUser.is, ViewUser);
