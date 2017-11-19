@@ -1,0 +1,107 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-route-mixin/app-route-mixin.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="view-admin-photos">
+  <template>
+    <style include="shared-styles app-grid-style">
+      :host {
+        display: block;
+        --app-grid-columns: 4;
+        --app-grid-gutter: 5px;
+        --app-grid-item-height: 250px;
+        --app-grid-expandible-item-columns: 4;
+      }
+      @media(max-width: 799px) {
+        :host {
+          --app-grid-columns: 2;
+          --app-grid-gutter: 5px;
+          --app-grid-item-height: 200px;
+        }
+      }
+
+      ul {
+        padding: 0;
+        list-style: none;
+      }
+
+      li {
+        display: flex
+      }
+
+      .item {
+          background-color: white;
+          background-size: cover;
+          background-position: center center;
+        }
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+
+    </style>
+
+    <firebase-query
+      id="query"
+      path="userChallenges"
+      data="{{userChallenges}}">
+    </firebase-query>
+
+    <ul class="app-grid">
+    <dom-repeat items="[[userChallenges]]" as="user">
+      <template>
+          <dom-repeat items="[[getUserChallenges(user)]]" as="challenge">
+            <template>
+              <li class="item" id="[[_getUserId(user)]]"
+                style$="[[_getItemStyle(user, challenge)]]">
+                <!-- <img src$="[[_getImage(user, challenge)]]"> -->
+              </li>
+              </paper-card>
+            </template>
+          </dom-repeat>
+      </template>
+    </dom-repeat>
+    </ul>
+  </template>
+
+  <script>
+    class ViewAdminPhotos extends AppRouteMixin(Polymer.Element) {
+      static get is() { return 'view-admin-photos'; }
+      getUserChallenges(user) {
+        return Object.keys(user).filter((item)=> item !== '$key');
+      }
+      _getImage(user, challenge) {
+        return user[challenge].selfie;
+      }
+
+      _getItemStyle(user, challenge) {
+        return 'background-image: url(' + this._getImage(user, challenge) + ');';
+      }
+
+      _getUserId(user) {
+        return user.$key;
+      }
+
+
+    }
+
+    window.customElements.define(ViewAdminPhotos.is, ViewAdminPhotos);
+  </script>
+</dom-module>

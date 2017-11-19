@@ -97,6 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         id="auth"
         provider="google"
         user="{{loggedUser}}"
+        status-known="{{statusKnown}}"
         signed-in="{{authenticated}}">
     </firebase-auth>
 
@@ -147,7 +148,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-pages
                 selected="[[page]]"
                 attr-for-selected="name"
-                fallback-selection="view404"
                 selected-attribute="active"
                 role="main">
               <template is="dom-if" if="[[isAdmin(role)]]">
@@ -155,24 +155,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </template>
               <view-user name="user" on-go-challenge="goChallenge"></view-user>
               <view-reto name="reto" on-challenge-finished="goUser"></view-reto>
-              <view-404 name="view404"></view-404>
             </iron-pages>
           </template>
           <template is="dom-if" if="[[!isAdmin(role)]]">
              <iron-pages
                 selected="[[page]]"
                 attr-for-selected="name"
-                fallback-selection="view404"
                 role="main">
             <view-user name="user" on-go-challenge="goChallenge"></view-user>
             <view-reto name="reto" on-challenge-finished="goUser"></view-reto>
-            <view-404 name="view404"></view-404>
             </iron-pages>
           </template>
         </template>
-			</app-header-layout>
-			<service-worker></service-worker>
-		</app-drawer-layout>
+      </app-header-layout>
+      <service-worker></service-worker>
+    </app-drawer-layout>
   </template>
 
   <script>
@@ -196,9 +193,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           role: String,
           userPath: String,
+          statusKnown: Boolean,
           authenticated: {
-            type: Boolean,
-            observer: '_authenticatedChanged'
+            type: Boolean
           },
           token: {
             type: String,
@@ -211,6 +208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get observers() {
         return [
+          '_authenticatedChanged(statusKnown, authenticated)',
           '_pageChanged(page)',
           '_userRoleChanged(role)'
         ];
@@ -222,6 +220,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       connectedCallback() {
         super.connectedCallback();
+        this._referredPath = this.route && this.route.path !== '/' ? this.route.path : null;
         this.active = true;
         if (this.hostDomain) {
           Polymer.Async.idlePeriod.run(function(){
@@ -250,6 +249,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
+      _setReferedPathOrDefault() {
+        this.set('route.path', this._referredPath || this.defaultPage);
+        this._referredPath = null;
+      }
+
       _showPage404() {
         this.page = 'view404';
       }
@@ -262,12 +266,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.auth.signOut();
       };
 
-      _authenticatedChanged(authenticated) {
-        this.set('page', this.defaultPage);
-        if (authenticated) {
-          this.importLazyGroup('authenticated').then((results) => {
-            window.dispatchEvent(new CustomEvent('resize'));
-          });
+      _authenticatedChanged(statusKnown, authenticated) {
+        if (statusKnown && authenticated !== undefined) {
+          if (authenticated) {
+            this.importLazyGroup('authenticated')
+              .then(() => this._setReferedPathOrDefault())
+              .then(() => window.dispatchEvent(new CustomEvent('resize')));
+          } else {
+            this._setReferedPathOrDefault()
+          }
         }
       }
 
@@ -305,8 +312,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       goChallenge() {
         this.page = 'reto';
-			}
-			goUser() {
+      }
+      goUser() {
         this.page = 'user';
       }
     }

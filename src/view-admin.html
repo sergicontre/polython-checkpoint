@@ -20,7 +20,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="view-admin">
   <link rel="lazy-import" group="challenges" href="view-admin-challenges.html">
   <link rel="lazy-import" group="users" href="view-admin-users.html">
-  <link rel="lazy-import" group="teams" href="view-admin-teams.html">
+	<link rel="lazy-import" group="teams" href="view-admin-teams.html">
+	<link rel="lazy-import" group="photos" href="view-admin-photos.html">
   <template>
     <style include="shared-styles">
       :host {
@@ -37,7 +38,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       fallback-selection="challenges">
       <paper-tab name="challenges">Challenges</paper-tab>
       <paper-tab name="users">Users</paper-tab>
-      <paper-tab name="teams">Teams</paper-tab>
+			<paper-tab name="teams">Teams</paper-tab>
+			<paper-tab name="photos">Photos</paper-tab>
     </paper-tabs>
 
     <iron-pages
@@ -46,7 +48,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       selected-attribute="active">
       <view-admin-challenges name="challenges"></view-admin-challenges>
       <view-admin-users name="users"></view-admin-users>
-      <view-admin-teams name="teams"></view-admin-teams>
+			<view-admin-teams name="teams"></view-admin-teams>
+			<view-admin-photos name="photos"></view-admin-photos>
     </iron-pages>
   </template>
 

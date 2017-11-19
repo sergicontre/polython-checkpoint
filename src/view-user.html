@@ -65,6 +65,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template>
     </dom-if>
 
+    <dom-if if="[[!_showCurrentChallenge(currentChallengeId, userChallenges.*)]]">
+      <template>
+        <p>No hay nuevos retos.</p>
+      </template>
+    </dom-if>
+
     <dom-if if="[[userChallenges.length]]">
       <template>
         <p>Retos enviados</p>
@@ -116,7 +122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (currentChallengeId && this.userChallenges) {
           show = !this.userChallenges.find(item => item.$key === currentChallengeId);
         }
-        return show;
+        return true;
 			}
     }
 
