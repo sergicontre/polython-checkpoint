@@ -70,7 +70,7 @@
       <div class="card-actions">
           <template is="dom-if" if="{{active}}">
               <div class="buttons-action">
-                  <flip-clock display-mode="countdown" auto start-from="20" hide-hours></flip-clock>
+                  <flip-clock display-mode="countdown" auto start-from="[[timeLeft(endTime)]]" hide-hours></flip-clock>
                   <paper-button on-tap="_doChallenge" class="polython-challenge-reserve">Do it!</paper-button>
                 </div>
           </template> 
@@ -96,7 +96,7 @@
             type: 'Object'
           },
           endTime: {
-            type: 'Object'
+            type: 'Number'
           },
           executionTime: {
             type: 'Object'
@@ -115,6 +115,9 @@
       }
       _doChallenge() {
         window.location.href = '/reto';
+      }
+      timeLeft(endTime){
+        return (endTime - Date.now()) / 60000
       }
     }
 
