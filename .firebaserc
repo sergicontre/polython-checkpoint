@@ -1,5 +1,6 @@
 {
   "projects": {
-    "polython-checkpoints": "polython-checkpoints"
+    "polython-checkpoints": "polython-checkpoints",
+    "default": "polython-checkpoints"
   }
 }

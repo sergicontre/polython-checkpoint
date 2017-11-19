@@ -51,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                        navigator.mozGetUserMedia ||
                        navigator.msGetUserMedia);
 
-        var videoObj = { "video": true,"audio": true };
+        var videoObj = { "video": true,"audio": false };
 
         var videoElement = this.$.videoId;
         navigator.getMedia(videoObj, function(stream){
