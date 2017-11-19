@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </firebase-document>
 
     <firebase-query
-      id="pastChallenges"
+      id="userChallenges"
       path="[[_userChallengesPath(loggedUser)]]"
       data="{{userChallenges}}">
     </firebase-query>
@@ -108,12 +108,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return typeof currentChallengeId === 'string' ? '/challenges/' + currentChallengeId : null;
       }
       _userChallengesPath(loggedUser) {
-        return loggedUser ? 'userChallenges/' + loggedUser.uid : null;
+        return loggedUser ? `/userChallenges/${loggedUser.uid}` : null;
       }
 
       _showCurrentChallenge(currentChallengeId, userChallengesChanges) {
         let show = true;
-        if (currentChallengeId ) {
+        if (currentChallengeId && this.userChallenges) {
           show = !this.userChallenges.find(item => item.$key === currentChallengeId);
         }
         return show;
