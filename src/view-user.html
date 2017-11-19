@@ -44,13 +44,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <p>Reto actual <a href="/reto">reto</a></p>
     <polython-challenge-item
-      title=[[item.title]]
-      description=[[item.description]]
-      start-time=[[item.startTime]]
-      end-time=[[item.endTime]]
-      execution-time=[[item.executionTime]]
-      picture-href=[[item.pictureHref]]
-      location=[[item.location]] >
+      title=[[currentCallenge.title]]
+      description=[[currentCallenge.description]]
+      start-time=[[currentCallenge.startTime]]
+      end-time=[[currentCallenge.endTime]]
+      execution-time=[[currentCallenge.executionTime]]
+      picture-href=[[currentCallenge.pictureHref]]
+      location=[[currentCallenge.location]] >
     </polython-challenge-item>
 
     <p>Retos pasados</p>
@@ -119,14 +119,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             startTime: '15:00',
             endTime: '15:30',
             executionTime: '15:21',
-<<<<<<< HEAD
             location: 'x, y',
             pictureHref: 'http://www.bellabeat.com/blog/media/Indulging-in-a-sweet-affair-with-chocolate-000048186060_Small.jpg',
             active: false
-=======
-            location: undefined,
-            pictureHref: 'http://www.bellabeat.com/blog/media/Indulging-in-a-sweet-affair-with-chocolate-000048186060_Small.jpg'
->>>>>>> Added firebase query
           },          
           {
             title: 'Checkpoint con frida',

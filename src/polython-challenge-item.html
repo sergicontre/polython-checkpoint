@@ -71,7 +71,7 @@
           <template is="dom-if" if="{{active}}">
               <div class="buttons-action">
                   <flip-clock display-mode="countdown" auto start-from="20" hide-hours></flip-clock>
-                  <paper-button class="polython-challenge-reserve">Do it!</paper-button>
+                  <paper-button on-tap="_doChallenge" class="polython-challenge-reserve">Do it!</paper-button>
                 </div>
           </template> 
       </div>
@@ -112,6 +112,9 @@
             value: false
           }
         }
+      }
+      _doChallenge() {
+        window.location.href = '/reto';
       }
     }
 
