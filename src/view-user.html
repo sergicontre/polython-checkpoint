@@ -10,6 +10,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" async href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polython-challenge-item.html">
 <link rel="import" href="shared-styles.html">
@@ -24,22 +26,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    <firebase-auth
+      id="auth"
+      provider="google"
+      user="{{loggedUser}}">
+    </firebase-auth>
+
     <firebase-document
       path="/activeChallenge"
       data="{{currentChallengeId}}">
     </firebase-document>
 
-    <firebase-query
+    <firebase-document
       id="currentChallenge"
-      path="[[pathCurrentChallenge]]"
+      path="[[_currentChallengePath(currentChallengeId)]]"
       data="{{currentCallenge}}">
-    </firebase-query>    
+    </firebase-document>
 
     <firebase-query
       id="pastChallenges"
-      path="/challenges"
+      path="[[_userChallenges(loggedUser)]]"
       data="{{challenges}}">
-    </firebase-query>    
+    </firebase-query>
 
 
     <p>Reto actual <a href="/reto">reto</a></p>
@@ -49,26 +57,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       start-time=[[currentCallenge.startTime]]
       end-time=[[currentCallenge.endTime]]
       execution-time=[[currentCallenge.executionTime]]
-      picture-href=[[currentCallenge.pictureHref]]
+      picture-href=[[currentCallenge.picture]]
       location=[[currentCallenge.location]] >
     </polython-challenge-item>
 
-    <p>Retos pasados</p>
-    <iron-list items="[[challenges]]" >
+    <dom-if if="[[challenges.length]]">
       <template>
-        <polython-challenge-item
-         title=[[item.title]]
-         description=[[item.description]]
-         start-time=[[item.startTime]]
-         end-time=[[item.endTime]]
-         execution-time=[[item.executionTime]]
-         picture-href=[[item.pictureHref]]
-         location=[[item.location]]
-         active=[[item.active]]
-        >
-        </polython-challenge-item>
+        <p>Retos pasados</p>
+        <iron-list items="[[challenges]]" >
+          <template>
+            <firebase-document
+              id="currentChallenge"
+              path="/challenges/[[item.$key]]"
+              data="{{item.challenge}}">
+            </firebase-document>
+            <polython-challenge-item
+            title=[[item.challenge.title]]
+            description=[[item.challenge.description]]
+            picture-href=[[item.selfie]]>
+            </polython-challenge-item>
+          </template>
+        </iron-list>
       </template>
-    </iron-list>
+    </dom-if>
   </template>
 
   <script>
@@ -80,12 +91,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           currentChallengeId: {
             type: 'String'
           },
-          pathCurrentChallenge: {
-            type: 'String',
-            computed: '_computePathForCurrentChallenge(currentChallengeId)'
-          },
           currentChallenge: {
-            type: 'Object',
+            type: 'Object'
           },
           challenges: {
             type: 'Array'
@@ -93,46 +100,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _computePathForCurrentChallenge(currentChallengeId) {
-        if (currentChallengeId instanceof String) {
-          return '/challenges/' + currentChallengeId;
-        } else {
-          return '';
-        }
+      _currentChallengePath(currentChallengeId) {
+        return typeof currentChallengeId === 'string' ? '/challenges/' + currentChallengeId : null;
       }
-
-      _getChallenges() {
-        return [
-          {
-            title: 'Checkpoint con mariachi',
-            description: 'Hazte una foto con el android Mariachi',
-            startTime: '13:00',
-            endTime: '13:30',
-            executionTime: '13:05',
-            location: 'x, y',
-            pictureHref: 'https://1.bp.blogspot.com/-LqjVHEyDImU/V7buZvy_P_I/AAAAAAAAIeQ/YzrvMSnd06YDwf7heYz53qMg6rEm5GJWACLcB/s640/14045890_318329811851920_8508340804919828659_n.jpg',
-            active: true
-          },
-          {
-            title: 'Checkpoint goloso',
-            description: 'Hazte una foto comiendo chocolates',
-            startTime: '15:00',
-            endTime: '15:30',
-            executionTime: '15:21',
-            location: 'x, y',
-            pictureHref: 'http://www.bellabeat.com/blog/media/Indulging-in-a-sweet-affair-with-chocolate-000048186060_Small.jpg',
-            active: false
-          },          
-          {
-            title: 'Checkpoint con frida',
-            description: 'Hazte una foto con el logo de Frida',
-            startTime: '17:00',
-            endTime: '17:30',
-            executionTime: undefined,
-            location: undefined,
-            active: false
-          }          
-        ]
+      _userChallenges(loggedUser) {
+        return loggedUser ? 'userChallenges/' + loggedUser.uid : null;
       }
     }
 

@@ -7,7 +7,7 @@
 
     <custom-style>
       <style is="custom-style">
-      
+
         body {
           display: flex;
           align-items: center;
@@ -55,8 +55,8 @@
         }
 
       </style>
-    </custom-style>    
-    
+    </custom-style>
+
     <paper-card image="[[pictureHref]]">
       <div class="card-content">
         <div class="polython-challenge-header">[[title]]
@@ -67,14 +67,15 @@
         </div>
         <p class="polython-challenge-light">[[description]]</p>
       </div>
-      <div class="card-actions">
-          <template is="dom-if" if="{{active}}">
-              <div class="buttons-action">
-                  <flip-clock display-mode="countdown" auto start-from="[[timeLeft(endTime)]]" hide-hours></flip-clock>
-                  <paper-button on-tap="_doChallenge" class="polython-challenge-reserve">Do it!</paper-button>
-                </div>
-          </template> 
-      </div>
+
+      <template is="dom-if" if="{{active}}">
+        <div class="card-actions">
+          <div class="buttons-action">
+            <flip-clock display-mode="countdown" auto start-from="[[timeLeft(endTime)]]" hide-hours></flip-clock>
+            <paper-button on-tap="_doChallenge" class="polython-challenge-reserve">Do it!</paper-button>
+          </div>
+        </div>
+      </template>
     </paper-card>
   </template>
 
