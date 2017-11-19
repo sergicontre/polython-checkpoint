@@ -40,7 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <firebase-document
       id="currentChallenge"
       path="[[_currentChallengePath(currentChallengeId)]]"
-      data="{{currentCallenge}}">
+      data="{{currentChallenge}}">
     </firebase-document>
 
     <firebase-query
@@ -52,13 +52,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <p>Reto actual <a href="/reto">reto</a></p>
     <polython-challenge-item
-      title=[[currentCallenge.title]]
-      description=[[currentCallenge.description]]
-      start-time=[[currentCallenge.startTime]]
-      end-time=[[currentCallenge.endTime]]
-      execution-time=[[currentCallenge.executionTime]]
-      picture-href=[[currentCallenge.picture]]
-      location=[[currentCallenge.location]] >
+      title=[[currentChallenge.title]]
+      description=[[currentChallenge.description]]
+      start-time=[[currentChallenge.startTime]]
+      end-time=[[currentChallenge.endTime]]
+      execution-time=[[currentChallenge.executionTime]]
+      picture-href=[[currentChallenge.picture]]
+      location=[[currentChallenge.location]]
+      active=[[currentChallenge.active]] >
     </polython-challenge-item>
 
     <dom-if if="[[challenges.length]]">
